@@ -214,15 +214,35 @@ drybeans<-heatProcess('drybeans')
 peas<-heatProcess('peas')
 ```
 
+### Lentils
+```{r, echo = FALSE, fig.align ='center'}
+lentils<-heatProcess('lentils')
+```
+
 ### Peanuts
 ```{r, echo = FALSE, fig.align ='center'}
 peanuts<-heatProcess('peanuts')
 ```
 
-## Tobacco (Harvested Acres ONLY)
+## Other Crops
+### Tobacco (Harvested Acres ONLY)
 ```{r, echo = FALSE, fig.align ='center'}
 tobacco<-heatProcess('tobacco')
 ```
 
+### Hops
+```{r, echo = FALSE, fig.align ='center'}
+hops<-heatProcess('hops')
+```
 
+## Hay
 
+### All Hay
+```{r, echo = FALSE, fig.align ='center'}
+hay<-heatProcess('hay')
+```
+
+### Alfalfa Hay
+```{r, echo = FALSE, fig.align ='center'}
+alfalfa<-heatProcess('alfalfaHay')
+```

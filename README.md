@@ -31,8 +31,14 @@ Mandy Liesch
 -   [Pulses and Beans](#pulses-and-beans)
     -   [Dry Beans](#dry-beans)
     -   [Dry Peas (And Austrian Peas)](#dry-peas-and-austrian-peas)
+    -   [Lentils](#lentils)
     -   [Peanuts](#peanuts)
--   [Tobacco (Harvested Acres ONLY)](#tobacco-harvested-acres-only)
+-   [Other Crops](#other-crops)
+    -   [Tobacco (Harvested Acres ONLY)](#tobacco-harvested-acres-only)
+    -   [Hops](#hops)
+-   [Hay](#hay)
+    -   [All Hay](#all-hay)
+    -   [Alfalfa Hay](#alfalfa-hay)
 
 ## USDA NASS Data
 
@@ -56,94 +62,116 @@ selected.
 
 ### Corn
 
-<img src="README_files/figure-gfm/unnamed-chunk-32-1.png" style="display: block; margin: auto;" />
+<img src="README_files/figure-gfm/unnamed-chunk-11-1.png" style="display: block; margin: auto;" />
 
 ### Soybean
 
-<img src="README_files/figure-gfm/unnamed-chunk-33-1.png" style="display: block; margin: auto;" />
+<img src="README_files/figure-gfm/unnamed-chunk-12-1.png" style="display: block; margin: auto;" />
 
 ### Cotton
 
-<img src="README_files/figure-gfm/unnamed-chunk-34-1.png" style="display: block; margin: auto;" />
+<img src="README_files/figure-gfm/unnamed-chunk-13-1.png" style="display: block; margin: auto;" />
 
 ### Rice
 
-<img src="README_files/figure-gfm/unnamed-chunk-35-1.png" style="display: block; margin: auto;" />
+<img src="README_files/figure-gfm/unnamed-chunk-14-1.png" style="display: block; margin: auto;" />
 
 ## Wheat
 
 ### Winter Wheat
 
-<img src="README_files/figure-gfm/unnamed-chunk-36-1.png" style="display: block; margin: auto;" />
+<img src="README_files/figure-gfm/unnamed-chunk-15-1.png" style="display: block; margin: auto;" />
 
 ### Spring Wheat
 
-<img src="README_files/figure-gfm/unnamed-chunk-37-1.png" style="display: block; margin: auto;" />
+<img src="README_files/figure-gfm/unnamed-chunk-16-1.png" style="display: block; margin: auto;" />
 
 ### Durum Wheat
 
-<img src="README_files/figure-gfm/unnamed-chunk-38-1.png" style="display: block; margin: auto;" />
+<img src="README_files/figure-gfm/unnamed-chunk-17-1.png" style="display: block; margin: auto;" />
 
 ## Other Grains
 
 ### Oats
 
-<img src="README_files/figure-gfm/unnamed-chunk-39-1.png" style="display: block; margin: auto;" />
+<img src="README_files/figure-gfm/unnamed-chunk-18-1.png" style="display: block; margin: auto;" />
 
 ### Barley
 
-<img src="README_files/figure-gfm/unnamed-chunk-40-1.png" style="display: block; margin: auto;" />
+<img src="README_files/figure-gfm/unnamed-chunk-19-1.png" style="display: block; margin: auto;" />
 
 ### Flaxseed
 
-<img src="README_files/figure-gfm/unnamed-chunk-41-1.png" style="display: block; margin: auto;" />
+<img src="README_files/figure-gfm/unnamed-chunk-20-1.png" style="display: block; margin: auto;" />
 
 ### Sorghum
 
-<img src="README_files/figure-gfm/unnamed-chunk-42-1.png" style="display: block; margin: auto;" />
+<img src="README_files/figure-gfm/unnamed-chunk-21-1.png" style="display: block; margin: auto;" />
 
 ## Oil Crops
 
 ### All Sunflower
 
-<img src="README_files/figure-gfm/unnamed-chunk-43-1.png" style="display: block; margin: auto;" />
+<img src="README_files/figure-gfm/unnamed-chunk-22-1.png" style="display: block; margin: auto;" />
 
 ### Canola
 
-<img src="README_files/figure-gfm/unnamed-chunk-44-1.png" style="display: block; margin: auto;" />
+<img src="README_files/figure-gfm/unnamed-chunk-23-1.png" style="display: block; margin: auto;" />
 
 ## Sugar Crops
 
 ### Sugar Beets
 
-<img src="README_files/figure-gfm/unnamed-chunk-45-1.png" style="display: block; margin: auto;" />
+<img src="README_files/figure-gfm/unnamed-chunk-24-1.png" style="display: block; margin: auto;" />
 
 ### Sugarcane (Harvested Sugar and Seed)
 
-<img src="README_files/figure-gfm/unnamed-chunk-46-1.png" style="display: block; margin: auto;" />
+<img src="README_files/figure-gfm/unnamed-chunk-25-1.png" style="display: block; margin: auto;" />
 
 ## Potatoes
 
 ### Potatoes
 
-<img src="README_files/figure-gfm/unnamed-chunk-47-1.png" style="display: block; margin: auto;" />
+<img src="README_files/figure-gfm/unnamed-chunk-26-1.png" style="display: block; margin: auto;" />
 
 ### Sweet Potatoes (No 2021 Data)
 
-<img src="README_files/figure-gfm/unnamed-chunk-48-1.png" style="display: block; margin: auto;" />
+<img src="README_files/figure-gfm/unnamed-chunk-27-1.png" style="display: block; margin: auto;" />
 
 ## Pulses and Beans
 
 ### Dry Beans
 
-<img src="README_files/figure-gfm/unnamed-chunk-49-1.png" style="display: block; margin: auto;" />
+<img src="README_files/figure-gfm/unnamed-chunk-28-1.png" style="display: block; margin: auto;" />
 
 ### Dry Peas (And Austrian Peas)
 
+<img src="README_files/figure-gfm/unnamed-chunk-29-1.png" style="display: block; margin: auto;" />
+
+### Lentils
+
+<img src="README_files/figure-gfm/unnamed-chunk-30-1.png" style="display: block; margin: auto;" />
+
 ### Peanuts
 
-<img src="README_files/figure-gfm/unnamed-chunk-51-1.png" style="display: block; margin: auto;" />
+<img src="README_files/figure-gfm/unnamed-chunk-31-1.png" style="display: block; margin: auto;" />
 
-## Tobacco (Harvested Acres ONLY)
+## Other Crops
 
-<img src="README_files/figure-gfm/unnamed-chunk-52-1.png" style="display: block; margin: auto;" />
+### Tobacco (Harvested Acres ONLY)
+
+<img src="README_files/figure-gfm/unnamed-chunk-32-1.png" style="display: block; margin: auto;" />
+
+### Hops
+
+<img src="README_files/figure-gfm/unnamed-chunk-33-1.png" style="display: block; margin: auto;" />
+
+## Hay
+
+### All Hay
+
+<img src="README_files/figure-gfm/unnamed-chunk-34-1.png" style="display: block; margin: auto;" />
+
+### Alfalfa Hay
+
+<img src="README_files/figure-gfm/unnamed-chunk-35-1.png" style="display: block; margin: auto;" />
