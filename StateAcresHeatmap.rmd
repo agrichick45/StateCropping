@@ -2,13 +2,25 @@
 title: "State Crops"
 author: "Mandy Liesch"
 date: "10/23/2021"
-output: html_document
+
 ---
+
+```{r setup, include=FALSE} 
+knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
+``` 
+
+```{css, echo=FALSE}
+h1, h2, h3 {
+  text-align: center;
+}
+```
+
 ```{r, echo=FALSE, message = FALSE, warning=FALSE}
 library(tidyverse)  # data manipulation
 library(rmarkdown)
 library(usethis)
 library(knitr)
+library(RColorBrewer)
 use_git_config(user.name="Mandy Liesch", user.email="amliesch@ncsu.edu")
 ```
 
@@ -24,7 +36,7 @@ rmarkdown::render("StateAcresHeatmap.Rmd",
 
 ## USDA NASS Data
 
-```{r}
+```{r, echo = FALSE}
 prePro<-function(crop){
   cropFile<-paste(crop,".csv", sep = "")
   return(cropFile)
@@ -32,7 +44,7 @@ prePro<-function(crop){
 ```
 State Crop Production Data from 1990-2021 in acres. The NASS data for each crop was downloaded by state, and trimmed into three columns in Microsoft Excel: Year, State, and Acres. The total land area of each state is noted in the GIS shapefiles. The square meter values were turned to acreages using the calculate function in an attribute table, and then the attribute table was exported to a .csv file for use in calculating the total crop area
 
-```{r}
+```{r, echo = FALSE}
 # Develop a function to read in cropping history from 
 # 1990-2021 (or whatever year is latest)
 cropRead<-function(crop){
@@ -80,15 +92,16 @@ cropRead<-function(crop){
 
 Once the file is read in and transformed, with new percentages calculated, the data is linked to a second function that transforms the data into a matrix format for use in the creation of heatmaps and plots. 
 
-```{r}
+```{r, echo = FALSE}
 heatProcess<-function(cropFile){
   cropNew<-cropRead(cropFile)
   row.names.remove<-c("OTHER STATES")
   cropNew<-cropNew[!(row.names(cropNew) %in% row.names.remove), ]
   cropNew[is.na(cropNew)]<-0
   cropNew<- cropNew[order(cropNew$`1990_P`),]
+  colnames(cropNew)<-c("'90", "'91", "'92", "'93","'94", "'95","'96", "'97","'98", "'99","'00", "'01", "'02", "'03", "'04", "'05", "'06", "'07", "'08", "'09", "'10", "'11", "'12", "'13","'14", "'15","'16", "'17","'18", "'19", "'20", "'21")
   crop_matrix <- data.matrix(cropNew)
-  crop_heatmap <- heatmap(crop_matrix, Rowv=NA, Colv=NA, scale="none", cexRow=0.5)
+  crop_heatmap <- heatmap(crop_matrix, Rowv=NA, Colv=NA, scale="none", cexRow=0.5, xlab="Year", ylab="State")
   return(crop_heatmap)
 }
 
@@ -99,100 +112,107 @@ And this function uses the data matrix from the above functions, and transfers t
 ## Major Cash Crops
 
 ### Corn
-```{r}
+```{r, echo = FALSE, fig.align ='center'}
 corn<-heatProcess('corn')
 ```
 
 ### Soybean
-```{r}
+```{r, echo = FALSE, fig.align ='center'}
 soybean<-heatProcess('soybean')
 ```
 
 ### Cotton
-```{r}
+```{r, echo = FALSE, fig.align ='center'}
 cotton<-heatProcess('cotton')
 ```
 
 ### Rice
-```{r}
+```{r, echo = FALSE, fig.align ='center'}
 rice<-heatProcess('rice')
 ```
 
 ## Wheat
 
 ### Winter Wheat
-```{r}
+```{r, echo = FALSE, fig.align ='center'}
 wintWheat<-heatProcess('winterwheat')
 ```
 
 ### Spring Wheat
-```{r}
+```{r, echo = FALSE, fig.align ='center'}
 sprWheat<-heatProcess('springwheat')
 ```
 
 ### Durum Wheat
-```{r}
+```{r, echo = FALSE, fig.align ='center'}
 durwheat<-heatProcess('durumwheat')
 ```
 
 ## Other Grains
 ### Oats
-```{r}
+```{r, echo = FALSE, fig.align ='center'}
 oats<-heatProcess('oats')
 ```
 
 ### Barley
-```{r}
+```{r, echo = FALSE, fig.align ='center'}
 barley<-heatProcess('barley')
 ```
 
 ### Flaxseed
-```{r}
+```{r, echo = FALSE, fig.align ='center'}
 flaxseed<-heatProcess('flaxseeds')
 ```
 
 ### Sorghum
-```{r}
+```{r, echo = FALSE, fig.align ='center'}
 sorghum<-heatProcess('sorghum')
 ```
 
 ## Oil Crops
 
 ### All Sunflower
-```{r}
+```{r, echo = FALSE, fig.align ='center'}
 sunflower<-heatProcess('sunflower')
 ```
 
 ### Canola
-```{r}
+```{r, echo = FALSE, fig.align ='center'}
 canola<-heatProcess('canola')
 ```
 
 ## Sugar Crops
 ### Sugar Beets
-```{r}
+```{r, echo = FALSE, fig.align ='center'}
 sugarbeets<-heatProcess('sugarbeets')
+```
+
+### Sugarcane (Harvested Sugar and Seed)
+```{r, echo = FALSE, fig.align ='center'}
+sugarcane<-heatProcess('sugarcane')
 ```
 
 ## Potatoes
 ### Potatoes
-```{r}
+```{r, echo = FALSE, fig.align ='center'}
 potato<-heatProcess('potatos')
 ```
 
-### Sweet Potatoes
-```{r}
-#sweetPotato<-heatProcess('sweetpotato')
+### Sweet Potatoes (No 2021 Data)
+```{r, echo = FALSE, fig.align ='center'}
+sweetPotato<-heatProcess('sweetpotato')
 ```
 
 ## Pulses and Beans
 ### Dry Beans
-```{r}
+```{r, echo = FALSE, fig.align ='center'}
 drybeans<-heatProcess('drybeans')
 ```
 
-
-
+## Tobacco (Harvested Acres ONLY)
+```{r, echo = FALSE, fig.align ='center'}
+tobacco<-heatProcess('tobacco')
+```
 
 
 
