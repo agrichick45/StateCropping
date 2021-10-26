@@ -209,15 +209,20 @@ sweetPotato<-heatProcess('sweetpotato')
 drybeans<-heatProcess('drybeans')
 ```
 
+### Dry Peas (And Austrian Peas)
+```{r, echo = FALSE, fig.align ='center'}
+#peas<-heatProcess('peas')
+```
+
+### Peanuts
+```{r, echo = FALSE, fig.align ='center'}
+peanuts<-heatProcess('peanuts')
+```
+
 ## Tobacco (Harvested Acres ONLY)
 ```{r, echo = FALSE, fig.align ='center'}
 tobacco<-heatProcess('tobacco')
 ```
 
-
-
-
-
-```
 
 
