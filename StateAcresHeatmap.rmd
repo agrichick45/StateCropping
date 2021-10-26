@@ -211,7 +211,7 @@ drybeans<-heatProcess('drybeans')
 
 ### Dry Peas (And Austrian Peas)
 ```{r, echo = FALSE, fig.align ='center'}
-#peas<-heatProcess('peas')
+peas<-heatProcess('peas')
 ```
 
 ### Peanuts
