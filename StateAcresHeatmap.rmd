@@ -2,7 +2,7 @@
 title: "State Crops"
 author: "Mandy Liesch"
 date: "10/23/2021"
-
+always_allow_html: true
 ---
 
 ```{r setup, include=FALSE} 
@@ -33,7 +33,7 @@ use_git_config(user.name="Mandy Liesch", user.email="amliesch@ncsu.edu")
 #render the function.
 rmarkdown::render("StateAcresHeatmap.Rmd", 
                   output_format = "github_document", 
-                  output_options = list(toc=TRUE, toc_depth = 3, html_preview=FALSE), 
+                  output_options = list(toc=TRUE, toc_depth = 3), 
                   output_file = "README.md")
 ```
 
