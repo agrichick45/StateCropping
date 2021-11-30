@@ -21,6 +21,10 @@ library(rmarkdown)
 library(usethis)
 library(knitr)
 library(RColorBrewer)
+library(reshape2)
+library(hrbrthemes)
+library(plotly)
+library(ggplot2)
 use_git_config(user.name="Mandy Liesch", user.email="amliesch@ncsu.edu")
 ```
 
@@ -81,11 +85,12 @@ cropRead<-function(crop){
   # produced per year divided by the acreage.
   percentages<-  cropMerge %>%
    mutate_at(vars(4:35) , funs(P =./cropMerge$AcreArea * 100))
-  # Use the states as row names
-  row.names(percentages) <- percentages$NAME
+  
   # Remove the raw acreage values and leave only the
   # percentages
-  cropNew <- percentages[, 36:67]
+  cropNew <- percentages[, c(1, 36:67)]
+  # re-add commodity name0
+  cropNew$crop<-crop
   return(cropNew)
 }
 ```
@@ -95,40 +100,129 @@ Once the file is read in and transformed, with new percentages calculated, the d
 ```{r, echo = FALSE}
 heatProcess<-function(cropFile){
   cropNew<-cropRead(cropFile)
-  row.names.remove<-c("OTHER STATES")
-  cropNew<-cropNew[!(row.names(cropNew) %in% row.names.remove), ]
+  # Use the states as row names
+  # Remove the Name Variable
+
+  cropNew$crop<-NULL
+  
+  cropNew<-filter(cropNew, NAME != "OTHER STATES")
+  
   cropNew[is.na(cropNew)]<-0
   cropNew<- cropNew[order(cropNew$`1990_P`),]
-  colnames(cropNew)<-c("'90", "'91", "'92", "'93","'94", "'95","'96", "'97","'98", "'99","'00", "'01", "'02", "'03", "'04", "'05", "'06", "'07", "'08", "'09", "'10", "'11", "'12", "'13","'14", "'15","'16", "'17","'18", "'19", "'20", "'21")
-  crop_matrix <- data.matrix(cropNew)
-  crop_heatmap <- heatmap(crop_matrix, Rowv=NA, Colv=NA, scale="none", cexRow=0.5, xlab="Year", ylab="State")
-  return(crop_heatmap)
+
+  
+  colnames(cropNew)<-c("NAME", "'90", "'91", "'92", "'93","'94", "'95","'96", "'97","'98", "'99","'00", "'01", "'02", "'03", "'04", "'05", "'06", "'07", "'08", "'09", "'10", "'11", "'12", "'13","'14", "'15","'16", "'17","'18", "'19", "'20", "'21")
+  
+  longFrame<-melt(cropNew, id.vars=c("NAME"))
+  
+  longFrame <- longFrame %>%
+  mutate(text = paste0("State: ", NAME, "\n", "Year: ", variable, "\n", "Percentage: ",round(value,2), "\n"))
+  
+  p<-  ggplot(longFrame, aes(variable, NAME, fill= value, text=text)) + 
+    geom_tile() +
+    scale_fill_gradient(low="white", high="red") +
+    theme_ipsum() +
+    theme(legend.position="right")
+  
+  finalPlot<-ggplotly(p, tooltip="text")
+  
+  return(finalPlot)
 }
 
 ```
 
 And this function uses the data matrix from the above functions, and transfers the matrix dataframe to a graphical heat map based on the crop selected.
 
+
+```{r, echo=FALSE}
+#create a megafile with all state and crop information
+
+allCrops<-c('alfalfaHay', 'barley', 'canola', 'corn', 'cotton', 'drybeans', 'durumwheat', 'flaxseeds', 'hay', 'hops', 'lentils', 'oats', 'peanuts', 'peas', 'potatos', 'rice', 'sorghum', 'soybean', 'springwheat', 'sugarbeets', 'sugarcane', 'sunflower', 'sweetpotato', 'tobacco', 'winterwheat')
+
+finalCropFrame<-lapply(X = allCrops, FUN = cropRead)
+
+cropFrame<-data.frame(Reduce(rbind, finalCropFrame))
+
+cropFrame[is.na(cropFrame)]<-0
+
+```
+
+```{r,  echo=FALSE}
+stateCrop<-function(state){
+  stateNew<-cropFrame
+  stateName<-state
+  filterState<-filter(stateNew,NAME==stateName)
+  filterState$NAME<-NULL
+  
+  colnames(filterState)<-c("'90", "'91", "'92", "'93","'94", "'95","'96", "'97","'98", "'99","'00", "'01", "'02", "'03", "'04", "'05", "'06", "'07", "'08", "'09", "'10", "'11", "'12", "'13","'14", "'15","'16", "'17","'18", "'19", "'20", "'21", "crop")
+  
+  longFrame<-melt(filterState, id.vars=c("crop"))
+  
+  longFrame<- longFrame[order(longFrame$crop),]
+  
+  longFrame <- longFrame %>%
+  mutate(text = paste0("Crop: ", crop, "\n", "Year: ", variable, "\n", "Percentage: ",round(value,2), "\n"))
+
+  p<-  ggplot(longFrame, aes(variable, crop, fill= value, text=text)) + 
+    geom_tile() +
+    scale_fill_gradient(low="white", high="red") +
+    theme_ipsum() +
+    theme(legend.position="right")
+  
+  finalPlot<-ggplotly(p, tooltip="text")
+  
+  return(finalPlot)
+}
+
+
+
+```
+
+## Key State Information
+
+### North Dakota
+```{r,  echo=FALSE}
+ND<-stateCrop("NORTH DAKOTA")
+ND
+```
+
+### Iowa
+```{r,  echo=FALSE}
+IA<-stateCrop("IOWA")
+IA
+```
+
+### Iowa
+```{r,  echo=FALSE}
+IA<-stateCrop("IOWA")
+IA
+```
+
+
 ## Major Cash Crops
 
 ### Corn
 ```{r, echo = FALSE, fig.align ='center'}
 corn<-heatProcess('corn')
+corn
 ```
 
 ### Soybean
 ```{r, echo = FALSE, fig.align ='center'}
 soybean<-heatProcess('soybean')
+soybean
 ```
 
 ### Cotton
 ```{r, echo = FALSE, fig.align ='center'}
 cotton<-heatProcess('cotton')
+cotton
 ```
 
 ### Rice
 ```{r, echo = FALSE, fig.align ='center'}
 rice<-heatProcess('rice')
+rice
 ```
 
 ## Wheat
@@ -136,37 +230,44 @@ rice<-heatProcess('rice')
 ### Winter Wheat
 ```{r, echo = FALSE, fig.align ='center'}
 wintWheat<-heatProcess('winterwheat')
+wintWheat
 ```
 
 ### Spring Wheat
 ```{r, echo = FALSE, fig.align ='center'}
 sprWheat<-heatProcess('springwheat')
+sprWheat
 ```
 
 ### Durum Wheat
 ```{r, echo = FALSE, fig.align ='center'}
 durwheat<-heatProcess('durumwheat')
+durwheat
 ```
 
 ## Other Grains
 ### Oats
 ```{r, echo = FALSE, fig.align ='center'}
 oats<-heatProcess('oats')
+oats
 ```
 
 ### Barley
 ```{r, echo = FALSE, fig.align ='center'}
 barley<-heatProcess('barley')
+barley
 ```
 
 ### Flaxseed
 ```{r, echo = FALSE, fig.align ='center'}
 flaxseed<-heatProcess('flaxseeds')
+flaxseed
 ```
 
 ### Sorghum
 ```{r, echo = FALSE, fig.align ='center'}
 sorghum<-heatProcess('sorghum')
+sorghum
 ```
 
 ## Oil Crops
@@ -174,65 +275,77 @@ sorghum<-heatProcess('sorghum')
 ### All Sunflower
 ```{r, echo = FALSE, fig.align ='center'}
 sunflower<-heatProcess('sunflower')
+sunflower
 ```
 
 ### Canola
 ```{r, echo = FALSE, fig.align ='center'}
 canola<-heatProcess('canola')
+canola
 ```
 
 ## Sugar Crops
 ### Sugar Beets
 ```{r, echo = FALSE, fig.align ='center'}
 sugarbeets<-heatProcess('sugarbeets')
+sugarbeets
 ```
 
 ### Sugarcane (Harvested Sugar and Seed)
 ```{r, echo = FALSE, fig.align ='center'}
 sugarcane<-heatProcess('sugarcane')
+sugarcane
 ```
 
 ## Potatoes
 ### Potatoes
 ```{r, echo = FALSE, fig.align ='center'}
 potato<-heatProcess('potatos')
+potato
 ```
 
 ### Sweet Potatoes (No 2021 Data)
 ```{r, echo = FALSE, fig.align ='center'}
 sweetPotato<-heatProcess('sweetpotato')
+sweetPotato
 ```
 
 ## Pulses and Beans
 ### Dry Beans
 ```{r, echo = FALSE, fig.align ='center'}
 drybeans<-heatProcess('drybeans')
+drybeans
 ```
 
 ### Dry Peas (And Austrian Peas)
 ```{r, echo = FALSE, fig.align ='center'}
 peas<-heatProcess('peas')
+peas
 ```
 
 ### Lentils
 ```{r, echo = FALSE, fig.align ='center'}
 lentils<-heatProcess('lentils')
+lentils
 ```
 
 ### Peanuts
 ```{r, echo = FALSE, fig.align ='center'}
 peanuts<-heatProcess('peanuts')
+peanuts
 ```
 
 ## Other Crops
 ### Tobacco (Harvested Acres ONLY)
 ```{r, echo = FALSE, fig.align ='center'}
 tobacco<-heatProcess('tobacco')
+tobacco
 ```
 
 ### Hops
 ```{r, echo = FALSE, fig.align ='center'}
 hops<-heatProcess('hops')
+hops
 ```
 
 ## Hay
@@ -240,9 +353,11 @@ hops<-heatProcess('hops')
 ### All Hay
 ```{r, echo = FALSE, fig.align ='center'}
 hay<-heatProcess('hay')
+hay
 ```
 
 ### Alfalfa Hay
 ```{r, echo = FALSE, fig.align ='center'}
 alfalfa<-heatProcess('alfalfaHay')
+alfalfa
 ```
