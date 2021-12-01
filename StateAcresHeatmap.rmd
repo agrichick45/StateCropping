@@ -186,10 +186,10 @@ ND<-stateCrop("NORTH DAKOTA")
 ND
 ```
 
-### Iowa
+### Wisconsin
 ```{r,  echo=FALSE}
-IA<-stateCrop("IOWA")
-IA
+WI<-stateCrop("WISCONSIN")
+WI
 ```
 
 ### Iowa
