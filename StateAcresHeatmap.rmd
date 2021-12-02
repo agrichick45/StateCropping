@@ -190,7 +190,6 @@ ND
 ### Wisconsin
 ```{r,  echo=FALSE}
 WI<-stateCrop("WISCONSIN")
-htmlwidgets::saveWidget(as_widget(WI), "_includes/wisconsin.html")
 WI
 ```
 
@@ -199,7 +198,10 @@ WI
 
 
 IA<-stateCrop("IOWA")
+
 saveWidget(IA, "IOWA.html", selfcontained = F, libdir = "lib")
+
+zip("IOWA.zip", c("IOWA.html", "lib"))
 
 ```
 
