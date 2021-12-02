@@ -207,12 +207,15 @@ zip("IOWA.zip", c("IOWA.html", "lib"))
 
 ```{r}
 htmltools::tags$iframe(
-  src = "IOWA.html", 
+  src = "StateCropping/IOWA.html", 
   scrolling = "no", 
   seamless = "seamless",
   frameBorder = "0"
 )
 ```
+
+
+StateCropping/IOWA.html
 
 ## Major Cash Crops
 
