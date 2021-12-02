@@ -25,6 +25,7 @@ library(reshape2)
 library(hrbrthemes)
 library(plotly)
 library(ggplot2)
+library(htmlwidgets)
 use_git_config(user.name="Mandy Liesch", user.email="amliesch@ncsu.edu")
 ```
 
@@ -189,15 +190,27 @@ ND
 ### Wisconsin
 ```{r,  echo=FALSE}
 WI<-stateCrop("WISCONSIN")
+htmlwidgets::saveWidget(as_widget(WI), "_includes/wisconsin.html")
 WI
 ```
 
 ### Iowa
 ```{r,  echo=FALSE}
+
+
 IA<-stateCrop("IOWA")
-IA
+saveWidget(IA, "IOWA.html", selfcontained = F, libdir = "lib")
+
 ```
 
+```{r}
+htmltools::tags$iframe(
+  src = "IOWA.html", 
+  scrolling = "no", 
+  seamless = "seamless",
+  frameBorder = "0"
+)
+```
 
 ## Major Cash Crops
 
