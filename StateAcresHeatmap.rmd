@@ -207,15 +207,14 @@ url<-"https://agrichick45.github.io//StateCropping//IOWA.html"
 
 ```
 
-`r I(url)`
 
 ```{r}
-#htmltools::tags$iframe(
- # src = "StateCropping/IOWA.html", 
-  #scrolling = "no", 
-  #seamless = "seamless",
-  #frameBorder = "0"
-#)
+htmltools::tags$iframe(
+  src = "url", 
+  scrolling = "no", 
+  seamless = "seamless",
+  frameBorder = "0"
+)
 ```
 
 
