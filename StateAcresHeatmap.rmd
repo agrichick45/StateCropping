@@ -7,6 +7,7 @@ always_allow_html: true
 
 ```{r setup, include=FALSE} 
 knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
+
 ``` 
 
 ```{css, echo=FALSE}
@@ -171,7 +172,7 @@ stateCrop<-function(state){
     theme(legend.position="right")
   
   finalPlot<-ggplotly(p, tooltip="text")
-  
+
   return(finalPlot)
 }
 
@@ -201,9 +202,14 @@ IA<-stateCrop("IOWA")
 
 saveWidget(IA, "IOWA.html", selfcontained = F, libdir = "lib")
 
-zip("IOWA.zip", c("IOWA.html", "lib"))
+url<-"https://agrichick45.github.io//StateCropping/IOWA.html.embed?width=550&height=550" 
+
+plotly_iframe <- paste("<center><iframe scrolling='no' seamless='seamless' style='border:none' src='", url, 
+    "/800/1200' width='800' height='1200'></iframe><center>", sep = "")
 
 ```
+
+`r I(plotly_iframe)`
 
 ```{r}
 htmltools::tags$iframe(
@@ -215,7 +221,7 @@ htmltools::tags$iframe(
 ```
 
 
-StateCropping/IOWA.html
+
 
 ## Major Cash Crops
 
