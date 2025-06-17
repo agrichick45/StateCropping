@@ -3,7 +3,7 @@ title: "State Crops"
 author: "Mandy Liesch"
 date: "10/23/2021"
 always_allow_html: true
-
+code_folding: hide
 ---
 
 ```{r setup, include=FALSE} 
@@ -36,8 +36,9 @@ use_git_config(user.name="Mandy Liesch", user.email="amliesch@yahoo.com")
 #render the function.
 rmarkdown::render("StateAcresHeatmap.Rmd", 
                   output_format = "html_document", 
+                  
                   output_options = list(toc=TRUE, toc_depth = 3), 
-                  output_file = "README.html")
+                  output_file = "StateAcresHeatmap.html")
 ```
 
 
@@ -208,18 +209,6 @@ url<-"https://agrichick45.github.io//StateCropping//IOWA.html"
 IA
 
 ```
-
-
-```{r}
-#htmltools::tags$iframe(
- # src = "StateCropping/IOWA.html", 
-  #scrolling = "no", 
-  #seamless = "seamless",
-  #frameBorder = "0"
-#)
-```
-
-
 
 
 ## Major Cash Crops
