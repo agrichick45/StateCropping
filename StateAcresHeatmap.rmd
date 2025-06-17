@@ -3,6 +3,7 @@ title: "State Crops"
 author: "Mandy Liesch"
 date: "10/23/2021"
 always_allow_html: true
+
 ---
 
 ```{r setup, include=FALSE} 
@@ -27,16 +28,16 @@ library(hrbrthemes)
 library(plotly)
 library(ggplot2)
 library(htmlwidgets)
-use_git_config(user.name="Mandy Liesch", user.email="amliesch@ncsu.edu")
+use_git_config(user.name="Mandy Liesch", user.email="amliesch@yahoo.com")
 ```
 
 ```{r, eval=FALSE, echo=FALSE}
 #code to create the rendering. this chunk is put into the code to knit and
 #render the function.
 rmarkdown::render("StateAcresHeatmap.Rmd", 
-                  output_format = "github_document", 
+                  output_format = "html_document", 
                   output_options = list(toc=TRUE, toc_depth = 3), 
-                  output_file = "README.md")
+                  output_file = "README.html")
 ```
 
 
@@ -204,17 +205,18 @@ saveWidget(IA, "IOWA.html", selfcontained = F, libdir = "lib")
 
 url<-"https://agrichick45.github.io//StateCropping//IOWA.html"
 
+IA
 
 ```
 
 
 ```{r}
-htmltools::tags$iframe(
-  src = "StateCropping/IOWA.html", 
-  scrolling = "no", 
-  seamless = "seamless",
-  frameBorder = "0"
-)
+#htmltools::tags$iframe(
+ # src = "StateCropping/IOWA.html", 
+  #scrolling = "no", 
+  #seamless = "seamless",
+  #frameBorder = "0"
+#)
 ```
 
 
