@@ -1,9 +1,9 @@
 ---
 title: "State Crops"
 author: "Mandy Liesch"
-date: "10/23/2021"
-always_allow_html: true
-code_folding: hide
+output:
+  html_document:
+    code_folding: hide
 ---
 
 ```{r setup, include=FALSE} 
@@ -18,40 +18,36 @@ h1, h2, h3 {
 ```
 
 ```{r, echo=FALSE, message = FALSE, warning=FALSE}
-library(tidyverse)  # data manipulation
-library(rmarkdown)
-library(usethis)
-library(knitr)
-library(RColorBrewer)
-library(reshape2)
-library(hrbrthemes)
-library(plotly)
-library(ggplot2)
-library(htmlwidgets)
+library(tidyverse)  # data manipulation Version 2.0.0
+library(rmarkdown)  # Version 2.29
+library(usethis)    # Version 3.1.0
+library(knitr)      # Version 1.49
+library(RColorBrewer) # Version 1.1-3
+library(reshape2)    # Version 1.4.4
+library(hrbrthemes) #Version 0.8.7
+library(plotly)     # Version 4.10.4
+library(ggplot2)    # Version 3.5.1
+library(htmlwidgets) # Version 1.6.4
 use_git_config(user.name="Mandy Liesch", user.email="amliesch@yahoo.com")
 ```
 
-```{r, eval=FALSE, echo=FALSE}
-#code to create the rendering. this chunk is put into the code to knit and
-#render the function.
-rmarkdown::render("StateAcresHeatmap.Rmd", 
-                  output_format = "html_document", 
-                  output_options = list(toc=TRUE, toc_depth = 3), 
-                  output_file = "StateAcresHeatmap.html")
-```
 
 
 ## USDA NASS Data
 
-```{r, echo = FALSE}
+```{r}
+#Create a function for reading all of the crop files together
 prePro<-function(crop){
+  #read all of the files, using the crop name, and the .csv to create file list
   cropFile<-paste(crop,".csv", sep = "")
+  #Return the crop file list
   return(cropFile)
 }
 ```
-State Crop Production Data from 1990-2021 in acres. The NASS data for each crop was downloaded by state, and trimmed into three columns in Microsoft Excel: Year, State, and Acres. The total land area of each state is noted in the GIS shapefiles. The square meter values were turned to acreages using the calculate function in an attribute table, and then the attribute table was exported to a .csv file for use in calculating the total crop area
 
-```{r, echo = FALSE}
+State Crop Production Data from 1990-2021 in acres. The NASS data for each crop was downloaded by state, and trimmed into three columns in Microsoft Excel: Year, State, and Acres. The total land area of each state was noted in the GIS shapefiles. The square meter values were turned to acreages using the calculate function in an attribute table, and then the attribute table was exported to a .csv file for use in calculating the total crop area
+
+```{r}
 # Develop a function to read in cropping history from 
 # 1990-2021 (or whatever year is latest)
 cropRead<-function(crop){
@@ -83,7 +79,8 @@ cropRead<-function(crop){
   # Merge the state acres data with the crop wide data  
   # by state name, only keeping those that appear in the  
   # cropping wide matrix. 
-  cropMerge<-merge(stateAcres, cropWide, by.x = 'NAME', by.y = 'State', all.y=TRUE)
+  cropMerge<-merge(stateAcres, cropWide, by.x = 'NAME', 
+                   by.y = 'State', all.y=TRUE)
   # Calculate the percentage of the total crop area  
   # produced per year divided by the acreage.
   percentages<-  cropMerge %>%
@@ -100,37 +97,61 @@ cropRead<-function(crop){
 
 Once the file is read in and transformed, with new percentages calculated, the data is linked to a second function that transforms the data into a matrix format for use in the creation of heatmaps and plots. 
 
-```{r, echo = FALSE}
+```{r}
 heatProcess<-function(cropFile){
+  #####
+  ## The objective of this function is to create the ##
+  ## parameters necessary for creating the heatmap   ##
+  ## by each individual state. It is designed to     ##
+  ## take the long form using year and state, and    ##
+  ## compresses it to the wide form.                 ##
+  ######
+  
+  #read in each individual crop type
   cropNew<-cropRead(cropFile)
   # Use the states as row names
   # Remove the Name Variable
-
   cropNew$crop<-NULL
-  
+  #Remove all of the Other States parameters
   cropNew<-filter(cropNew, NAME != "OTHER STATES")
-  
+  #Replace all of the NA values with 0
   cropNew[is.na(cropNew)]<-0
+  #reorder the data frame by the percentage of land from 1990
   cropNew<- cropNew[order(cropNew$`1990_P`),]
-
-  
-  colnames(cropNew)<-c("NAME", "'90", "'91", "'92", "'93","'94", "'95","'96", "'97","'98", "'99","'00", "'01", "'02", "'03", "'04", "'05", "'06", "'07", "'08", "'09", "'10", "'11", "'12", "'13","'14", "'15","'16", "'17","'18", "'19", "'20", "'21")
-  
+  #rename the columns by year
+  colnames(cropNew)<-c("NAME", "'90", "'91", "'92", "'93","'94", "'95","'96", 
+                       "'97","'98", "'99","'00", "'01", "'02", "'03", "'04", 
+                       "'05", "'06", "'07", "'08", "'09", "'10", "'11", "'12", 
+                       "'13","'14", "'15","'16", "'17","'18", "'19","'20","'21")
+  #Convert the wide data frame into a long one via crop name
   longFrame<-melt(cropNew, id.vars=c("NAME"))
-  
+  #create the numerical values for the text display
   longFrame <- longFrame %>%
-  mutate(text = paste0("State: ", NAME, "\n", "Year: ", variable, "\n", "Percentage: ",round(value,2), "\n"))
-  
-  p<-  ggplot(longFrame, aes(variable, NAME, fill= value, text=text)) + 
+      #Add the state values and name
+      mutate(text = paste0("State: ", NAME, "\n", 
+                           #Add the year and year name
+                           "Year: ", variable, "\n", 
+                           #Add the percentages rounded to a value of 2 digits
+                           "Percentage: ",round(value,2), "\n"))
+  #Create a ggplot using the long frame data
+  p<-  ggplot(longFrame, 
+              #using the percentage (Variable), and state names
+              aes(variable, NAME, 
+              #Fill with percentages and add the text as a hover feature
+              fill= value, text=text)) + 
+    #Create a tile chart
     geom_tile() +
+    #Reverse the scale of the axis
     scale_y_discrete(limits=rev) + 
+    #Set the graident from low to high
     scale_fill_gradient(low="white", high="red") +
+    #Remove the axis names and put the legend on the left
     theme(axis.title.x = element_blank(),
           axis.title.y = element_blank(), 
           legend.position="right") 
-  
+  #Convert the ggplot to plotyly
   finalPlot<-ggplotly(p, tooltip="text")
-  
+  #Return the final plot
   return(finalPlot)
 }
 
@@ -139,51 +160,97 @@ heatProcess<-function(cropFile){
 And this function uses the data matrix from the above functions, and transfers the matrix dataframe to a graphical heat map based on the crop selected.
 
 
-```{r, echo=FALSE}
+```{r}
 #create a megafile with all state and crop information
+allCrops<-c('alfalfaHay', 'barley', 'canola', 'corn', 'cotton', 'drybeans', 
+            'durumwheat', 'flaxseeds', 'hay', 'hops', 'lentils', 'oats', 
+            'peanuts', 'peas', 'potatos', 'rice', 'sorghum', 'soybean', 
+            'springwheat', 'sugarbeets', 'sugarcane', 'sunflower','sweetpotato', 
+            'tobacco', 'winterwheat')
 
-allCrops<-c('alfalfaHay', 'barley', 'canola', 'corn', 'cotton', 'drybeans', 'durumwheat', 'flaxseeds', 'hay', 'hops', 'lentils', 'oats', 'peanuts', 'peas', 'potatos', 'rice', 'sorghum', 'soybean', 'springwheat', 'sugarbeets', 'sugarcane', 'sunflower', 'sweetpotato', 'tobacco', 'winterwheat')
-
+#Create a list of all of the crops and run it through the cropRead function
 finalCropFrame<-lapply(X = allCrops, FUN = cropRead)
 
+#Put all of the data together into one final crop frame
 cropFrame<-data.frame(Reduce(rbind, finalCropFrame))
 
+#Replace all NA values with 0
 cropFrame[is.na(cropFrame)]<-0
 
 ```
 
-```{r,  echo=FALSE}
+```{r}
+#STATE name values are in all capital letters
 stateCrop<-function(state){
+  
+  #####
+  ## The objective of this function is to create the ##
+  ## parameters necessary for creating the heatmap   ##
+  ## by each individual crop type by state. It is    ##
+  ## designed to take the long form using year and   ##   
+  ## state, and compresses it to the wide form.      ##
+  ######
+  #Take the large crop frame values and change the name
   stateNew<-cropFrame
+  #set the state name as the state inputted in the function
   stateName<-state
+  #Filter the state by statename
   filterState<-filter(stateNew,NAME==stateName)
+  #Remove the state name
   filterState$NAME<-NULL
-  
-  colnames(filterState)<-c("'90", "'91", "'92", "'93","'94", "'95","'96", "'97","'98", "'99","'00", "'01", "'02", "'03", "'04", "'05", "'06", "'07", "'08", "'09", "'10", "'11", "'12", "'13","'14", "'15","'16", "'17","'18", "'19", "'20", "'21", "crop")
-  
+  #Change the column names to reflect the year and the crop type
+  colnames(filterState)<-c("'90", "'91", "'92", "'93","'94", "'95","'96", "'97",
+                           "'98", "'99","'00", "'01", "'02", "'03", "'04", "'05",
+                           "'06", "'07", "'08", "'09", "'10", "'11", "'12", 
+                           "'13","'14", "'15","'16", "'17","'18", "'19", "'20",
+                           "'21", "crop")
+  #Set the crop value as a factor
   levels(as.factor(filterState$crop))
-  
-  filterState$crop <- fct_recode(filterState$crop, "Alfalfa" = "alfalfaHay", "Barley" = "barley", "Canola"= "canola", "Corn" = "corn", "Cotton" = "cotton", "Dry Beans" = "drybeans", "Durum Wheat" = "durumwheat", "Flax" = "flaxseeds", "Hay" = "hay", "Hops" = "hops", "Lentils" = "lentils", "Oats" = "oats", "Peanuts" = "peanuts", "Peas" = "peas", "Potatoes" = "potatos", "Rice" = "rice", "Sorghum" = "sorghum", "Soybean" = "soybean", "Spring Wheat" = "springwheat", "Sugar Beets" = "sugarbeets", "Sugar Cane"="sugarcane", "Sunflower" = "sunflower", "Sweet Potato" = "sweetpotato", "Tobacco" = "tobacco", "Winter Wheat" = "winterwheat")
-  
+  #Rename the crop type for display purposes
+  filterState$crop <- fct_recode(filterState$crop, "Alfalfa" = "alfalfaHay", 
+                                 "Barley" = "barley", "Canola"= "canola", 
+                                 "Corn" = "corn", "Cotton" = "cotton", 
+                                 "Dry Beans" = "drybeans", "Durum Wheat" = "durumwheat", 
+                                 "Flax" = "flaxseeds", "Hay" = "hay", 
+                                 "Hops" = "hops", "Lentils" = "lentils", 
+                                 "Oats" = "oats", "Peanuts" = "peanuts", 
+                                 "Peas" = "peas", "Potatoes" = "potatos", 
+                                 "Rice" = "rice", "Sorghum" = "sorghum", 
+                                 "Soybean" = "soybean", "Spring Wheat" = "springwheat", 
+                                 "Sugar Beets" = "sugarbeets", "Sugar Cane"="sugarcane", 
+                                 "Sunflower" = "sunflower", "Sweet Potato" = "sweetpotato", 
+                                 "Tobacco" = "tobacco", "Winter Wheat" = "winterwheat")
+  #Transfer the data frame into the long format by crop type
   longFrame<-melt(filterState, id.vars=c("crop"))
-  
+  #order the values alphabetically
   longFrame<- longFrame[order(longFrame$crop),]
-  
+  #create the values for the text display
   longFrame <- longFrame %>%
-  mutate(text = paste0("Crop: ", crop, "\n", "Year: ", variable, "\n", "Percentage: ",round(value,2), "\n"))
-
-  p<-  ggplot(longFrame, aes(variable, crop, fill= value, text=text)) + 
+     #Add the crop name
+     mutate(text = paste0("Crop: ", crop, "\n",
+                          #Add the year
+                          "Year: ", variable, "\n", 
+                          #Add the percentage
+                          "Percentage: ",round(value,2), "\n"))
+  #Create a ggplot
+  p<-  ggplot(longFrame, 
+              #using the percentage (Variable), and state names
+              aes(variable, crop, 
+                  #Fill with percentages and add the text as a hover feature
+                  fill= value, text=text)) + 
+    #Create a tile chart
     geom_tile() +
+    #Reverse the scale of the axis
     scale_y_discrete(limits=rev) + 
+    #Set the graident from low to high
     scale_fill_gradient(low="white", high="red") +
+    #Remove the axis names and put the legend on the left
     theme(axis.title.x = element_blank(),
           axis.title.y = element_blank(), 
           legend.position="right") 
-    
-   
-  
+  #Convert to plotly
   finalPlot<-ggplotly(p, tooltip="text")
-
+  #return the plotly
   return(finalPlot)
 }
 
@@ -193,59 +260,84 @@ stateCrop<-function(state){
 
 ## Key State Information
 
+This file can be downloaded, and the state of choice can be changed using the stateCrop function, and a query of capital letters. 
+
 ### North Dakota
-```{r,  echo=FALSE}
+
+North Dakota is a very unique state in regards to commodities. There are many different crops that grow only in North Dakota. Over time, since the 1990s, there has been a decline in small grain production, including barley, Durum and spring Wheat, and oat production, as well as sunflower,  in favor of an increased production of soybeans and corn, and to a lesser extent, canola. 
+
+```{r}
+#Run North Dakota through the state crop function
 ND<-stateCrop("NORTH DAKOTA")
+#Display it
 ND
 ```
 
 ### Wisconsin
-```{r,  echo=FALSE}
+
+Wisconsin used to be a state that produced a lot alfalfa as a legume, as well as a decline in hay production. This crop has been replaced over this 20 year period by soybeans. Corn production has been steady in Wisconsin. 
+
+```{r}
+#Repeat for Wisconsin
 WI<-stateCrop("WISCONSIN")
 WI
 ```
 
 ### Iowa
-```{r,  echo=FALSE}
 
+Iowa has been mostly steady in areas of corn and soy production (being in the corn belt), with the small amount of hay and alfalfa being replaced with soybean. Unlike North Dakota, the state isn't known for its diversity. 
 
+```{r}
+#Repeat for Iowa
 IA<-stateCrop("IOWA")
-
 IA
-
 ```
 
 ### Kansas
-```{r,  echo=FALSE}
 
+Kansas, like North Dakota, is another state that has had their primary crop (winter wheat) replaced by corn and soybean production. Sorghum and hay production has been steady, as has sunflower production. 
 
+```{r}
+#Repeat for Kansas
 KS<-stateCrop("KANSAS")
-
 KS
-
 ```
 
 ## Major Cash Crops
 
 ### Corn
+
+Corn is one of the most prominent cash crops in the United States, though Illinois, Iowa, and Indiana comprise the largest production of the crop (over 25% of land area), and production seems to hold steady there. There has been expansion in many other states adjacent to the corn belt, like Nebraska, Kansas, and Minnesota. Ohio, Wisconsin, Delaware, and Maryland are other large area producers, and seemed to be holding steady over time. 
+
 ```{r, echo = FALSE, fig.align ='center'}
+#run the corn crop through the heat process function
 corn<-heatProcess('corn')
+#Display it
 corn
 ```
 
 ### Soybean
+
+Soybean is not produced in as many states as corn. However, in most of the states, soybean area has increased. In the corn belt, production of soybean area has increased. Illinois, Indiana, Iowa, Minnesota, Nebraska, Wisconsin, and both Dakotas. 
+
 ```{r, echo = FALSE, fig.align ='center'}
 soybean<-heatProcess('soybean')
 soybean
 ```
 
 ### Cotton
+
+Cotton, overall, has been on the decline nationally, with Texas and Georgia the only state holding steady. 
+
 ```{r, echo = FALSE, fig.align ='center'}
 cotton<-heatProcess('cotton')
 cotton
 ```
 
 ### Rice
+
+Rice is not grown in a huge part of the country, and production has been steady, with a slight decline in Mississippi. 
+
 ```{r, echo = FALSE, fig.align ='center'}
 rice<-heatProcess('rice')
 rice
@@ -254,18 +346,27 @@ rice
 ## Wheat
 
 ### Winter Wheat
+
+Winter wheat area has, overall, declined nationally. With Kansas and Oklahoma being the biggest producers, with their overall area cut in half. 
+
 ```{r, echo = FALSE, fig.align ='center'}
 wintWheat<-heatProcess('winterwheat')
 wintWheat
 ```
 
 ### Spring Wheat
+
+Spring wheat is also on decline, with North and South Dakota being the primary producers, and the overall area of production cut in half. 
+
 ```{r, echo = FALSE, fig.align ='center'}
 sprWheat<-heatProcess('springwheat')
 sprWheat
 ```
 
 ### Durum Wheat
+
+There has also been a large decline in area of Durum wheat, especially in the primary state of production (North Dakota).
+
 ```{r, echo = FALSE, fig.align ='center'}
 durwheat<-heatProcess('durumwheat')
 durwheat
@@ -273,24 +374,36 @@ durwheat
 
 ## Other Grains
 ### Oats
+
+Oat production in the United States is down, overall, over a 20 year time period, especially in areas that it used to grow in. 
+
 ```{r, echo = FALSE, fig.align ='center'}
 oats<-heatProcess('oats')
 oats
 ```
 
 ### Barley
+
+Like all other small grains, barley area is down over a 20 year time period.
+
 ```{r, echo = FALSE, fig.align ='center'}
 barley<-heatProcess('barley')
 barley
 ```
 
 ### Flaxseed
+
+Flaxseed production has remained steady, though, it really has only been produced in North Dakota, with a slight increase in Montana. 
+
 ```{r, echo = FALSE, fig.align ='center'}
 flaxseed<-heatProcess('flaxseeds')
 flaxseed
 ```
 
 ### Sorghum
+
+Sorghum production in Kansas and Texas has remained steady, as it is they are the primary producer of sorghum in the US. Nebraska, Missouri, and Arkansas have seen a drop off in production. 
+
 ```{r, echo = FALSE, fig.align ='center'}
 sorghum<-heatProcess('sorghum')
 sorghum
@@ -299,12 +412,18 @@ sorghum
 ## Oil Crops
 
 ### All Sunflower
+
+Production of Sunflower in South Dakota is up, with most other states producing sunflowers experiencing a decline. 
+
 ```{r, echo = FALSE, fig.align ='center'}
 sunflower<-heatProcess('sunflower')
 sunflower
 ```
 
 ### Canola
+
+Canola is a crop primarly grown in North Dakota, with the state experiencing and increase in cropland area. 
+
 ```{r, echo = FALSE, fig.align ='center'}
 canola<-heatProcess('canola')
 canola
@@ -312,12 +431,18 @@ canola
 
 ## Sugar Crops
 ### Sugar Beets
+
+Sugar Beets are grown in the Upper midwest and plains, and production has been mostly the same in these areas over 20 years. 
+
 ```{r, echo = FALSE, fig.align ='center'}
 sugarbeets<-heatProcess('sugarbeets')
 sugarbeets
 ```
 
 ### Sugarcane (Harvested Sugar and Seed)
+
+Sugarcane fields have also been steady in the three states that it is produced in. 
+
 ```{r, echo = FALSE, fig.align ='center'}
 sugarcane<-heatProcess('sugarcane')
 sugarcane
@@ -325,12 +450,18 @@ sugarcane
 
 ## Potatoes
 ### Potatoes
+
+Idaho and Washington have experienced a steady potato production over 20 years, while North Dakota and Delaware have experienced a decline in production. 
+
 ```{r, echo = FALSE, fig.align ='center'}
 potato<-heatProcess('potatos')
 potato
 ```
 
 ### Sweet Potatoes (No 2021 Data)
+
+Sweet potato production has increased in North Carolina and Mississippi, with a decline in production in Louisiana. 
+
 ```{r, echo = FALSE, fig.align ='center'}
 sweetPotato<-heatProcess('sweetpotato')
 sweetPotato
